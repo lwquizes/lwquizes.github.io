@@ -18,7 +18,7 @@
             font-size: 36px;
             color: #f39c12;
         }
-        #quiz-container, #character-setup {
+        #quiz-container, #character-setup, #shop-container {
             background-color: #34495e;
             margin-top: 20px;
             padding: 20px;
@@ -80,6 +80,47 @@
             font-size: 24px;
             font-weight: bold;
         }
+        #leaderboard {
+            margin-top: 30px;
+            background-color: #34495e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #leaderboard h2 {
+            color: #f39c12;
+            font-size: 28px;
+        }
+        #leaderboard-list {
+            list-style: none;
+            padding: 0;
+            font-size: 22px;
+            color: #ecf0f1;
+            margin-top: 20px;
+        }
+        #leaderboard-list li {
+            padding: 10px;
+            border-bottom: 1px solid #95a5a6;
+        }
+        #leaderboard-list li:first-child {
+            background-color: #f39c12;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        #leaderboard-list li:last-child {
+            border-bottom: none;
+        }
+        #shop-container {
+            display: none;
+        }
+        .shop-item {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            background-color: #3498db;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -114,12 +155,29 @@
         <div id="color-preview"></div>
 
         <button onclick="startQuiz()">Start Quiz</button>
+        <button onclick="openShop()">Shop</button>
     </div>
 
     <!-- Quiz Section -->
     <div id="quiz-container" style="display: none;">
         <div id="timer">Zeit: 00:20</div>
         <div id="quiz-content"></div>
+    </div>
+
+    <!-- Shop Section -->
+    <div id="shop-container">
+        <h1>Avatar-Shop</h1>
+        <p>Wähle ein Emoji, das du für deinen Avatar kaufen möchtest:</p>
+        <div class="shop-item" onclick="purchaseEmoji('🦄')">🦄</div>
+        <div class="shop-item" onclick="purchaseEmoji('🐉')">🐉</div>
+        <div class="shop-item" onclick="purchaseEmoji('👑')">👑</div>
+        <button onclick="closeShop()">Schließen</button>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div id="leaderboard" style="display: none;">
+        <h2>Beste Spieler</h2>
+        <ul id="leaderboard-list"></ul>
     </div>
 
     <script>
@@ -130,6 +188,7 @@
         let score = 0;
         let timer;
         let timeLeft = 20;
+        let avatarCollection = [];  // Array für gekaufte Emojis
 
         // Funktion zum Auswählen des Avatars
         function selectAvatar(selectedAvatar) {
@@ -163,126 +222,94 @@
 
         // Fragen und Antworten für das Quiz
         const quizQuestions = [
-    { 
-        question: "Wie nennt man den Bereich, in dem der Torwart den Ball mit den Händen spielen darf?", 
-        answer: "Strafraum", 
-        options: ["Strafraum", "Torraum", "Mittelfeld"] 
-    },
-    { 
-        question: "Welches Element ist essenziell für die Torwart-Technik?", 
-        answer: "Sprungkraft", 
-        options: ["Sprungkraft", "Schusskraft", "Geschwindigkeit"] 
-    },
-    { 
-        question: "Welche Ausrüstung ist speziell für Torhüter erforderlich?", 
-        answer: "Handschuhe", 
-        options: ["Handschuhe", "Schienbeinschoner", "Torwarthose"] 
-    },
-    { 
-        question: "Was bedeutet der Begriff \u201eFausten\u201c im Torwartspiel?", 
-        answer: "Den Ball mit den Fäusten klären", 
-        options: ["Den Ball kontrolliert mit den Händen abfangen", "Den Ball mit den Fäusten klären", "Einen Spieler wegdrücken"] 
-    },
-    { 
-        question: "Welcher Fuß wird beim Abstoß idealerweise verwendet?", 
-        answer: "Der stärkere Fuß", 
-        options: ["Der stärkere Fuß", "Beide Füße gleichzeitig", "Immer der linke Fuß"] 
-    },
-    { 
-        question: "Was sollte ein Torwart tun, wenn er in einem Eins-gegen-Eins-Duell mit einem Angreifer ist?", 
-        answer: "Herauslaufen, um den Winkel zu verkleinern", 
-        options: ["Im Tor bleiben und abwarten", "Herauslaufen, um den Winkel zu verkleinern", "Sich hinlegen"] 
-    },
-    { 
-        question: "Was ist die Hauptaufgabe eines Torwarts bei einem Freistoß?", 
-        answer: "Die Mauer korrekt zu positionieren", 
-        options: ["Die Mauer korrekt zu positionieren", "Den Ball ins Tor ablenken", "Passwege blockieren"] 
-    },
-    { 
-        question: "Wie sollte ein Torwart bei einem Eckball stehen?", 
-        answer: "Zwei Meter vor der Torlinie", 
-        options: ["Direkt auf der Torlinie", "Zwei Meter vor der Torlinie", "Auf Höhe des Elfmeterpunktes"] 
-    },
-    { 
-        question: "Welche Fähigkeit ist besonders wichtig, um Distanzschüsse zu halten?", 
-        answer: "Reflexe", 
-        options: ["Reflexe", "Spielübersicht", "Teamkommunikation"] 
-    },
-    { 
-        question: "Ein Angreifer schießt den Ball in Richtung Tor, und der Ball ist schwer zu erreichen. Was sollte der Torwart tun?", 
-        answer: "Mit voller Kraft zum Ball hechten", 
-        options: ["Mit voller Kraft zum Ball hechten", "Den Ball nur beobachten", "Den Ball absichtlich ins Tor lassen"] 
-    },
-    { 
-        question: "Der Torwart fängt den Ball. Was ist die beste Möglichkeit, einen Konter einzuleiten?", 
-        answer: "Den Ball zu einem nahen Verteidiger spielen", 
-        options: ["Den Ball weit nach vorne werfen", "Den Ball zu einem nahen Verteidiger spielen", "Den Ball so lange wie möglich halten"] 
-    },
-    { 
-        question: "Wie kann ein Torwart seine Mitspieler am effektivsten während des Spiels dirigieren?", 
-        answer: "Laut und klar kommunizieren", 
-        options: ["Laut und klar kommunizieren", "Handzeichen geben", "Still beobachten"] 
-    }
-];
+            { question: "Wie nennt man den Bereich, in dem der Torwart den Ball mit den Händen spielen darf?", answer: "Strafraum", options: ["Strafraum", "Torraum", "Mittelfeld"] },
+            { question: "Welches Element ist essenziell für die Torwart-Technik?", answer: "Sprungkraft", options: ["Sprungkraft", "Schusskraft", "Geschwindigkeit"] },
+            { question: "Welche Ausrüstung ist speziell für Torhüter erforderlich?", answer: "Handschuhe", options: ["Handschuhe", "Schienbeinschoner", "Torwarthose"] },
+            { question: "Was bedeutet der Begriff Fausten im Torwartspiel?", answer: "Den Ball mit den Fäusten klären", options: ["Den Ball kontrolliert mit den Händen abfangen", "Den Ball mit den Fäusten klären", "Einen Spieler wegdrücken"] },
+            { question: "Welcher Fuß wird beim Abstoß idealerweise verwendet?", answer: "Der stärkere Fuß", options: ["Der stärkere Fuß", "Beide Füße gleichzeitig", "Immer der linke Fuß"] },
+            { question: "Was sollte ein Torwart tun, wenn er in einem Eins-gegen-Eins-Duell mit einem Angreifer ist?", answer: "Herauslaufen, um den Winkel zu verkleinern", options: ["Im Tor bleiben und abwarten", "Herauslaufen, um den Winkel zu verkleinern", "Sich hinlegen"] },
+            { question: "Was ist die Hauptaufgabe eines Torwarts bei einem Freistoß?", answer: "Die Mauer korrekt zu positionieren", options: ["Die Mauer korrekt zu positionieren", "Den Ball ins Tor ablenken", "Passwege blockieren"] },
+            { question: "Wie sollte ein Torwart bei einem Eckball stehen?", answer: "Zwei Meter vor der Torlinie", options: ["Direkt auf der Torlinie", "Zwei Meter vor der Torlinie", "Auf Höhe des Elfmeterpunktes"] },
+            { question: "Welche Fähigkeit ist besonders wichtig, um Distanzschüsse zu halten?", answer: "Reflexe", options: ["Reflexe", "Spielübersicht", "Teamkommunikation"] },
+            { question: "Ein Angreifer schießt den Ball in Richtung Tor, und der Ball ist schwer zu erreichen. Was sollte der Torwart tun?", answer: "Mit voller Kraft zum Ball hechten", options: ["Mit voller Kraft zum Ball hechten", "Den Ball nur beobachten", "Den Ball absichtlich ins Tor lassen"] },
+            { question: "Der Torwart fängt den Ball. Was ist die beste Möglichkeit, einen Konter einzuleiten?", answer: "Den Ball zu einem nahen Verteidiger spielen", options: ["Den Ball weit nach vorne werfen", "Den Ball zu einem nahen Verteidiger spielen", "Den Ball so lange wie möglich halten"] },
+            { question: "Wie kann ein Torwart seine Mitspieler am effektivsten während des Spiels dirigieren?", answer: "Laut und klar kommunizieren", options: ["Laut und klar kommunizieren", "Handzeichen geben", "Still beobachten"] }
+        ];
 
+        // Funktion zur Anzeige der aktuellen Frage und Optionen
+        function displayQuestion() {
+            const quizContent = document.getElementById("quiz-content");
+            const questionData = quizQuestions[currentQuestion];
 
-// Funktion zur Anzeige der aktuellen Frage und Optionen
-function displayQuestion() {
-    const quizContent = document.getElementById("quiz-content");
-    const questionData = quizQuestions[currentQuestion];
+            quizContent.innerHTML =  
+                `<div class="quiz-item">
+                    <h2>${questionData.question}</h2>
+                    ${questionData.options.map((option) => 
+                        `<button style="background-color: ${avatarColor};" onclick="nextQuestion('${option}')">${option}</button>` 
+                    ).join('')}
+                </div>`;
+            
+            // Setze den Timer für diese Frage
+            timeLeft = 20; 
+            startTimer();  
+        }
 
-    quizContent.innerHTML = ` 
-        <div class="quiz-item">
-            <h2>${questionData.question}</h2>
-            ${questionData.options.map((option) => `
-                <button style="background-color: ${avatarColor};" onclick="nextQuestion('${option}')">${option}</button>
-            `).join('')}
-        </div>
-    `;
-    
-    // Setze den Timer für diese Frage
-    timeLeft = 20; 
-    startTimer();  
-}
+        // Funktion zur Handhabung der Benutzerantwort und zur Anzeige der nächsten Frage
+        function nextQuestion(selectedOption) {
+            const correctAnswer = quizQuestions[currentQuestion].answer;
 
-// Funktion zur Handhabung der Benutzerantwort und zur Anzeige der nächsten Frage
-function nextQuestion(selectedOption) {
-    const correctAnswer = quizQuestions[currentQuestion].answer;
+            // Überprüfen, ob die Antwort richtig ist
+            if (selectedOption === correctAnswer) {
+                score++;
+            }
 
-    // Überprüfen, ob die Antwort richtig ist
-    if (selectedOption === correctAnswer) {
-        score++;
-    }
+            currentQuestion++;
 
-    currentQuestion++;
+            // Wenn es noch Fragen gibt, zeige die nächste Frage an
+            if (currentQuestion < quizQuestions.length) {
+                displayQuestion();
+            } else {
+                displayResult();
+            }
+        }
 
-    // Wenn es noch Fragen gibt, zeige die nächste Frage an
-    if (currentQuestion < quizQuestions.length) {
-        displayQuestion();
-    } else {
-        displayResult();
-    }
-}
+        // Funktion zur Anzeige des Ergebnisbildschirms
+        function displayResult() {
+            const quizContent = document.getElementById("quiz-content");
+            quizContent.innerHTML = 
+                `<div id="result">Quiz beendet!</div>
+                <p>Dein Punktestand: ${score} von ${quizQuestions.length}</p>
+                <button onclick="restartQuiz()">Erneut starten</button>
+                <br><br>
+                <button onclick="goToMainMenu()">Zurück zum Hauptmenü</button>`;
+            clearInterval(timer); // Stoppe den Timer
+            saveScore();
+        }
 
-// Funktion zur Anzeige des Ergebnisbildschirms
-function displayResult() {
-    const quizContent = document.getElementById("quiz-content");
-    quizContent.innerHTML = `
-        <div id="result">Quiz beendet!</div>
-        <p>Dein Punktestand: ${score} von ${quizQuestions.length}</p>
-        <button onclick="restartQuiz()">Erneut starten</button>
-        <br><br>
-        <button onclick="goToMainMenu()">Zurück zum Hauptmenü</button>
-    `;
-    clearInterval(timer); // Stoppe den Timer
-}
+        // Speichert den Punktestand in der Bestenliste
+        function saveScore() {
+            let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            leaderboard.push({ name: playerName, score: score });
+            leaderboard.sort((a, b) => b.score - a.score); // Sortiere nach Punktestand
+            if (leaderboard.length > 5) leaderboard = leaderboard.slice(0, 5); // Zeige nur die besten 5
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+            displayLeaderboard();
+        }
 
+        // Zeigt die Bestenliste an
+        function displayLeaderboard() {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            const leaderboardList = document.getElementById("leaderboard-list");
+            leaderboardList.innerHTML = leaderboard.map(player => 
+                `<li>${player.name}: ${player.score} Punkte</li>` 
+            ).join('');
+            document.getElementById("leaderboard").style.display = "block";
+        }
 
-// Funktion zum Zurückkehren zum Hauptmenü (index.html)
-function goToMainMenu() {
-    window.location.href = 'index.html'; // Leitet den Benutzer zur index.html weiter
-}
-
+        // Funktion zum Zurückkehren zum Hauptmenü (index.html)
+        function goToMainMenu() {
+            window.location.href = 'index.html'; // Leitet den Benutzer zur index.html weiter
+        }
 
         // Funktion, um das Quiz neu zu starten
         function restartQuiz() {
@@ -311,6 +338,27 @@ function goToMainMenu() {
                 }
             }, 1000);  // Timer läuft jede Sekunde
         }
+
+        // Shop öffnen
+        function openShop() {
+            document.getElementById("shop-container").style.display = "block";
+        }
+
+        // Shop schließen
+        function closeShop() {
+            document.getElementById("shop-container").style.display = "none";
+        }
+
+        // Emoji kaufen
+        function purchaseEmoji(emoji) {
+            if (!avatarCollection.includes(emoji)) {
+                avatarCollection.push(emoji);
+                alert(`Du hast das Emoji ${emoji} gekauft!`);
+            } else {
+                alert("Dieses Emoji hast du bereits!");
+            }
+        }
     </script>
+
 </body>
 </html>
