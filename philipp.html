@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Quiz mit Charakter-Design</title>
+    <title>Torwartspiel das Quiz</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -124,12 +124,12 @@
 
     <script>
         let playerName = "";
-        let avatar = "🌟"; // Default avatar
-        let avatarColor = "#3498db"; // Default color
+        let avatar = "🌟"; 
+        let avatarColor = "#3498db";
         let currentQuestion = 0;
         let score = 0;
         let timer;
-        let timeLeft = 20; // 20 seconds per question
+        let timeLeft = 20;
 
         // Funktion zum Auswählen des Avatars
         function selectAvatar(selectedAvatar) {
@@ -158,67 +158,125 @@
 
             document.getElementById("character-setup").style.display = "none";
             document.getElementById("quiz-container").style.display = "block";
-            displayQuestion(); // Zeige die erste Frage
+            displayQuestion(); 
         }
 
         // Fragen und Antworten für das Quiz
-        const questions = [
-            { question: "test1?", answer: "Nein", options: ["Ja", "Nein", "Villeicht", "Test"] },
-            { question: "test2?", answer: "Nein", options: ["Ja", "Nein", "Villeicht", "Test"] },
-            { question: "test3?", answer: "Nein", options: ["Ja", "Nein", "Villeicht", "Test"] },
-            { question: "test4?", answer: "Nein", options: ["Ja", "Nein", "Villeicht", "Test"] },
-        ];
+        const quizQuestions = [
+    { 
+        question: "Wie nennt man den Bereich, in dem der Torwart den Ball mit den Händen spielen darf?", 
+        answer: "Strafraum", 
+        options: ["Strafraum", "Torraum", "Mittelfeld"] 
+    },
+    { 
+        question: "Welches Element ist essenziell für die Torwart-Technik?", 
+        answer: "Sprungkraft", 
+        options: ["Sprungkraft", "Schusskraft", "Geschwindigkeit"] 
+    },
+    { 
+        question: "Welche Ausrüstung ist speziell für Torhüter erforderlich?", 
+        answer: "Handschuhe", 
+        options: ["Handschuhe", "Schienbeinschoner", "Torwarthose"] 
+    },
+    { 
+        question: "Was bedeutet der Begriff \u201eFausten\u201c im Torwartspiel?", 
+        answer: "Den Ball mit den Fäusten klären", 
+        options: ["Den Ball kontrolliert mit den Händen abfangen", "Den Ball mit den Fäusten klären", "Einen Spieler wegdrücken"] 
+    },
+    { 
+        question: "Welcher Fuß wird beim Abstoß idealerweise verwendet?", 
+        answer: "Der stärkere Fuß", 
+        options: ["Der stärkere Fuß", "Beide Füße gleichzeitig", "Immer der linke Fuß"] 
+    },
+    { 
+        question: "Was sollte ein Torwart tun, wenn er in einem Eins-gegen-Eins-Duell mit einem Angreifer ist?", 
+        answer: "Herauslaufen, um den Winkel zu verkleinern", 
+        options: ["Im Tor bleiben und abwarten", "Herauslaufen, um den Winkel zu verkleinern", "Sich hinlegen"] 
+    },
+    { 
+        question: "Was ist die Hauptaufgabe eines Torwarts bei einem Freistoß?", 
+        answer: "Die Mauer korrekt zu positionieren", 
+        options: ["Die Mauer korrekt zu positionieren", "Den Ball ins Tor ablenken", "Passwege blockieren"] 
+    },
+    { 
+        question: "Wie sollte ein Torwart bei einem Eckball stehen?", 
+        answer: "Zwei Meter vor der Torlinie", 
+        options: ["Direkt auf der Torlinie", "Zwei Meter vor der Torlinie", "Auf Höhe des Elfmeterpunktes"] 
+    },
+    { 
+        question: "Welche Fähigkeit ist besonders wichtig, um Distanzschüsse zu halten?", 
+        answer: "Reflexe", 
+        options: ["Reflexe", "Spielübersicht", "Teamkommunikation"] 
+    },
+    { 
+        question: "Ein Angreifer schießt den Ball in Richtung Tor, und der Ball ist schwer zu erreichen. Was sollte der Torwart tun?", 
+        answer: "Mit voller Kraft zum Ball hechten", 
+        options: ["Mit voller Kraft zum Ball hechten", "Den Ball nur beobachten", "Den Ball absichtlich ins Tor lassen"] 
+    },
+    { 
+        question: "Der Torwart fängt den Ball. Was ist die beste Möglichkeit, einen Konter einzuleiten?", 
+        answer: "Den Ball zu einem nahen Verteidiger spielen", 
+        options: ["Den Ball weit nach vorne werfen", "Den Ball zu einem nahen Verteidiger spielen", "Den Ball so lange wie möglich halten"] 
+    },
+    { 
+        question: "Wie kann ein Torwart seine Mitspieler am effektivsten während des Spiels dirigieren?", 
+        answer: "Laut und klar kommunizieren", 
+        options: ["Laut und klar kommunizieren", "Handzeichen geben", "Still beobachten"] 
+    }
+];
 
-        // Funktion zur Anzeige der aktuellen Frage und Optionen
-        function displayQuestion() {
-            const quizContent = document.getElementById("quiz-content");
-            const questionData = questions[currentQuestion];
 
-            quizContent.innerHTML = ` 
-                <div class="quiz-item">
-                    <h2>${questionData.question}</h2>
-                    ${questionData.options.map((option) => `
-                        <button style="background-color: ${avatarColor};" onclick="nextQuestion('${option}')">${option}</button>
-                    `).join('')}
-                </div>
-            `;
-            
-            // Setze den Timer für diese Frage
-            timeLeft = 20;  // Reset timer to 20 seconds for each new question
-            startTimer();  // Start the countdown for the current question
-        }
+// Funktion zur Anzeige der aktuellen Frage und Optionen
+function displayQuestion() {
+    const quizContent = document.getElementById("quiz-content");
+    const questionData = quizQuestions[currentQuestion];
 
-        // Funktion zur Handhabung der Benutzerantwort und zur Anzeige der nächsten Frage
-        function nextQuestion(selectedOption) {
-            const correctAnswer = questions[currentQuestion].answer;
+    quizContent.innerHTML = ` 
+        <div class="quiz-item">
+            <h2>${questionData.question}</h2>
+            ${questionData.options.map((option) => `
+                <button style="background-color: ${avatarColor};" onclick="nextQuestion('${option}')">${option}</button>
+            `).join('')}
+        </div>
+    `;
+    
+    // Setze den Timer für diese Frage
+    timeLeft = 20; 
+    startTimer();  
+}
 
-            // Überprüfen, ob die Antwort richtig ist
-            if (selectedOption === correctAnswer) {
-                score++;
-            }
+// Funktion zur Handhabung der Benutzerantwort und zur Anzeige der nächsten Frage
+function nextQuestion(selectedOption) {
+    const correctAnswer = quizQuestions[currentQuestion].answer;
 
-            currentQuestion++;
+    // Überprüfen, ob die Antwort richtig ist
+    if (selectedOption === correctAnswer) {
+        score++;
+    }
 
-            // Wenn es noch Fragen gibt, zeige die nächste Frage an
-            if (currentQuestion < questions.length) {
-                displayQuestion();
-            } else {
-                displayResult();
-            }
-        }
+    currentQuestion++;
+
+    // Wenn es noch Fragen gibt, zeige die nächste Frage an
+    if (currentQuestion < quizQuestions.length) {
+        displayQuestion();
+    } else {
+        displayResult();
+    }
+}
 
 // Funktion zur Anzeige des Ergebnisbildschirms
 function displayResult() {
     const quizContent = document.getElementById("quiz-content");
     quizContent.innerHTML = `
         <div id="result">Quiz beendet!</div>
-        <p>Dein Punktestand: ${score} von ${questions.length}</p>
+        <p>Dein Punktestand: ${score} von ${quizQuestions.length}</p>
         <button onclick="restartQuiz()">Erneut starten</button>
         <br><br>
         <button onclick="goToMainMenu()">Zurück zum Hauptmenü</button>
     `;
     clearInterval(timer); // Stoppe den Timer
 }
+
 
 // Funktion zum Zurückkehren zum Hauptmenü (index.html)
 function goToMainMenu() {
@@ -256,4 +314,3 @@ function goToMainMenu() {
     </script>
 </body>
 </html>
-
