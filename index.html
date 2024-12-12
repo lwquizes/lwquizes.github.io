@@ -1,1 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Start Menü</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #2c3e50;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        #start-menu {
+            text-align: center;
+            background-color: #34495e;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            animation: moveAndColorChange 3s ease-in-out infinite;
+            text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.7), -4px -4px 10px rgba(0, 0, 0, 0.7); /* Verstärkter Schatten */
+        }
+
+        /* Farbwechsel-Effekt */
+        .color {
+            background: linear-gradient(90deg, #f39c12, #e74c3c, #2ecc71, #9b59b6, #3498db);
+            background-size: 300% 100%;
+            background-position: 100% 0;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: colorShift 5s ease-in-out infinite;
+        }
+
+        /* Keyframes für den Farbwechsel-Effekt */
+        @keyframes colorShift {
+            0% {
+                background-position: 100% 0;
+            }
+            50% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 100% 0;
+            }
+        }
+
+        /* Animation für springenden Text */
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Für den Effekt "Springender Text" */
+        .bounce-text {
+            animation: bounce 0.5s ease infinite;
+        }
+
+        .quiz-option {
+            background-color: #3498db;
+            color: white;
+            font-size: 22px;
+            padding: 20px;
+            margin: 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .quiz-option:hover {
+            background-color: #2980b9;
+            transform: translateY(-5px);
+        }
+
+        .quiz-option:focus {
+            outline: none;
+        }
+
+        .option-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .option-container a {
+            text-decoration: none;
+        }
+
+        /* Dropdown für Effektauswahl */
+        select {
+            padding: 10px;
+            font-size: 18px;
+            margin-top: 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        /* Der Options-Button und Credits-Button nebeneinander */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .options-button,
+        .credits-button {
+            padding: 15px 30px;
+            font-size: 22px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 200px;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .options-button {
+            background-color: #8e44ad; /* Geile lila Farbe */
+        }
+
+        .credits-button {
+            background-color: #16a085; /* Frisches grün-blau */
+        }
+
+        .options-button:hover {
+            background-color: #732d91;
+        }
+
+        .credits-button:hover {
+            background-color: #1abc9c;
+        }
+
+        /* Verstecktes Menü */
+        #effect-menu {
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Start Menü -->
+    <div id="start-menu">
+        <h1 id="welcome-text" class="color">Willkommen zum Quiz!</h1>
+        <p>Wähle ein Quiz, um zu starten:</p>
+        
+        <div class="option-container">
+            <!-- Option für das Python-Quiz -->
+            <a href="philipp.html" onclick="playSound('click-sound.mp3')">
+                <button class="quiz-option">Torwartspiel (Philipp) Quiz</button>
+            </a>
+            
+            <!-- Option für das JavaScript-Quiz -->
+            <a href="emir.html" onclick="playSound('click-sound.mp3')">
+                <button class="quiz-option">Audi (Emir) Quiz</button>
+            </a>
+        </div>
+
+        <!-- Buttons für Optionen und Credits -->
+        <div class="button-container">
+            <button class="options-button" onclick="toggleOptionsMenu()">Optionen</button>
+            <button class="credits-button" onclick="showCredits()">Credits</button>
+        </div>
+
+        <!-- Effektauswahl Menü (zuerst ausgeblendet) -->
+        <div id="effect-menu">
+            <label for="effect-select">Wähle einen Text-Effekt:</label>
+            <select id="effect-select">
+                <option value="color">Farbwechselnd</option>
+                <option value="bounce">Springend</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Soundeffekt für Buttonklick -->
+    <audio id="sound-effect" style="display:none;">
+        <source src="click-sound.mp3" type="audio/mp3">
+    </audio>
+
+    <script>
+        // Funktion, um das Optionsmenü ein- oder auszublenden
+        function toggleOptionsMenu() {
+            var menu = document.getElementById('effect-menu');
+            if (menu.style.display === 'none' || menu.style.display === '') {
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = 'none';
+            }
+        }
+
+        // Soundeffekt-Funktion
+        function playSound(soundFile) {
+            var audio = document.getElementById('sound-effect');
+            audio.src = soundFile;
+            audio.play();
+        }
+
+        // Wechseln der Text-Effekte
+        document.getElementById('effect-select').addEventListener('change', function() {
+            var effect = this.value;
+            var welcomeText = document.getElementById('welcome-text');
+            welcomeText.classList.remove('color', 'bounce-text'); // Entferne vorherige Effekte
+
+            if (effect === 'color') {
+                welcomeText.classList.add('color'); // Farbwechsel-Effekt
+            } else if (effect === 'bounce') {
+                welcomeText.classList.add('bounce-text'); // Springender Text
+            }
+        });
+
+        // Credits anzeigen
+        function showCredits() {
+            alert("Quiz erstellt von: Philipp Litwin\nDesign und Entwicklung durch: Silas Dornbusch und Philipp litwin\nSoundeffekte von: SoundLibrary.com");
+        }
+    </script>
+
+</body>
+</html>
 
